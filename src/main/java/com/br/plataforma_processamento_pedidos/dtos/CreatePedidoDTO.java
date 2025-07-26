@@ -19,6 +19,17 @@ public class CreatePedidoDTO {
     @NotNull
     private StatusPedido status;
 
+    public CreatePedidoDTO() {
+    }
+
+    public CreatePedidoDTO(String codigoPedido, String produto, int quantidade, BigDecimal valorTotal, StatusPedido status) {
+        this.codigoPedido = codigoPedido;
+        this.produto = produto;
+        this.quantidade = quantidade;
+        this.valorTotal = valorTotal;
+        this.status = status;
+    }
+
     public String getCodigoPedido() {
         return codigoPedido;
     }

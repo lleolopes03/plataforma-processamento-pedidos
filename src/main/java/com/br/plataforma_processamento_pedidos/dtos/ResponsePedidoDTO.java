@@ -15,6 +15,20 @@ public class ResponsePedidoDTO {
     private LocalDateTime dataCriacao;
     private LocalDateTime dataAtualizacao;
 
+    public ResponsePedidoDTO() {
+    }
+
+    public ResponsePedidoDTO(Long id, String codigoPedido, String produto, int quantidade, BigDecimal valorTotal, StatusPedido status, LocalDateTime dataCriacao, LocalDateTime dataAtualizacao) {
+        this.id = id;
+        this.codigoPedido = codigoPedido;
+        this.produto = produto;
+        this.quantidade = quantidade;
+        this.valorTotal = valorTotal;
+        this.status = status;
+        this.dataCriacao = dataCriacao;
+        this.dataAtualizacao = dataAtualizacao;
+    }
+
     public Long getId() {
         return id;
     }

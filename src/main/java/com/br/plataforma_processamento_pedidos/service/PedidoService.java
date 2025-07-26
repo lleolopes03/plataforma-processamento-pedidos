@@ -36,6 +36,9 @@ public class PedidoService {
     }
 
     public ResponsePedidoDTO salvar(CreatePedidoDTO createDto){
+        if (pedidoRepository.existsByCodigoPedido(createDto.getCodigoPedido())) {
+            throw new IllegalStateException("Pedido com este código já existe!");
+        }
         Pedido pedido = PedidoMapper.toPedido(createDto);
         pedido.setDataCriacao(LocalDateTime.now());
 
