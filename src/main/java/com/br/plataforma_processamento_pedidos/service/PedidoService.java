@@ -6,6 +6,8 @@ import com.br.plataforma_processamento_pedidos.dtos.mapper.PedidoMapper;
 import com.br.plataforma_processamento_pedidos.exception.BusinessException;
 import com.br.plataforma_processamento_pedidos.model.Pedido;
 import com.br.plataforma_processamento_pedidos.repositories.PedidoRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +18,31 @@ import java.util.List;
 public class PedidoService {
     @Autowired
     private PedidoRepository pedidoRepository;
+    @Autowired
+    PedidoProducer pedidoProducer;
+    @Autowired
+    private ObjectMapper objectMapper;
+
+
+    private void publicarEvento(ResponsePedidoDTO responseDTO) {
+        try {
+            String mensagem = objectMapper.writeValueAsString(responseDTO);
+            pedidoProducer.enviarPedidoCriado(mensagem);
+        } catch (JsonProcessingException e) {
+            throw new BusinessException("Erro ao converter pedido para JSON: " + e.getMessage());
+        }
+    }
 
     public ResponsePedidoDTO salvar(CreatePedidoDTO createDto){
-        Pedido pedido= PedidoMapper.toPedido(createDto);
+        Pedido pedido = PedidoMapper.toPedido(createDto);
         pedido.setDataCriacao(LocalDateTime.now());
-        Pedido pedidoSalvo=pedidoRepository.save(pedido);
-        return PedidoMapper.toDto(pedidoSalvo);
 
+        Pedido pedidoSalvo = pedidoRepository.save(pedido);
+        ResponsePedidoDTO responseDTO = PedidoMapper.toDto(pedidoSalvo);
+
+        publicarEvento(responseDTO);
+
+        return responseDTO;
     }
     public ResponsePedidoDTO buscaPorId(Long id){
         Pedido pedido=pedidoRepository.findById(id).orElseThrow(()->new BusinessException(String.format("Pedido com id: %s não encontrado",id)));

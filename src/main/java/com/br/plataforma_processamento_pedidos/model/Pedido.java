@@ -1,5 +1,6 @@
 package com.br.plataforma_processamento_pedidos.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -26,9 +27,17 @@ public class Pedido implements Serializable {
     @Column(name = "status", nullable = false)
     private StatusPedido status;
     @Column(name = "data_criacao",nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataCriacao;
     @Column(name = "data_atualizacao",nullable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime dataAtualizacao;
+    @PrePersist
+    public void aoCriar() {
+        LocalDateTime agora = LocalDateTime.now();
+        this.dataCriacao = agora;
+        this.dataAtualizacao = agora;
+    }
 
     public Pedido() {
     }
