@@ -3,6 +3,9 @@ package com.br.plataforma_processamento_pedidos.dtos;
 public class PedidoDeletadoEvent {
     private String codigoPedido;
 
+    public PedidoDeletadoEvent() {
+    }
+
     public PedidoDeletadoEvent(String codigoPedido) {
         this.codigoPedido = codigoPedido;
     }

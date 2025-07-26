@@ -9,6 +9,9 @@ public class PedidoAtualizadoEvent {
     private StatusPedido status;
     private LocalDateTime dataAtualizacao;
 
+    public PedidoAtualizadoEvent() {
+    }
+
     public PedidoAtualizadoEvent(String codigoPedido, StatusPedido status, LocalDateTime dataAtualizacao) {
         this.codigoPedido = codigoPedido;
         this.status = status;
