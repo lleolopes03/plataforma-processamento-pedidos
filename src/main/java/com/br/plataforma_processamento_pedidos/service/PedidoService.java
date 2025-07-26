@@ -1,6 +1,8 @@
 package com.br.plataforma_processamento_pedidos.service;
 
 import com.br.plataforma_processamento_pedidos.dtos.CreatePedidoDTO;
+import com.br.plataforma_processamento_pedidos.dtos.PedidoAtualizadoEvent;
+import com.br.plataforma_processamento_pedidos.dtos.PedidoDeletadoEvent;
 import com.br.plataforma_processamento_pedidos.dtos.ResponsePedidoDTO;
 import com.br.plataforma_processamento_pedidos.dtos.mapper.PedidoMapper;
 import com.br.plataforma_processamento_pedidos.exception.BusinessException;
@@ -52,24 +54,34 @@ public class PedidoService {
         List<Pedido>pedidos=pedidoRepository.findAll();
         return PedidoMapper.toListDto(pedidos);
     }
-    public void deletar(Long id){
-        if (!pedidoRepository.existsById(id)){
-            throw new BusinessException(String.format("Pedido com id: %s não encontrado",id));
-        }
+    public void deletar(Long id) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(String.format("Pedido com id: %s não encontrado", id)));
+
         pedidoRepository.deleteById(id);
 
+        PedidoDeletadoEvent evento = new PedidoDeletadoEvent(pedido.getCodigoPedido());
+        pedidoProducer.enviarPedidoDeletado(evento);
     }
-    public ResponsePedidoDTO editarPedido(Long id, CreatePedidoDTO creteDto){
-        Pedido pedido=pedidoRepository.findById(id).orElseThrow(()->new BusinessException(String.format("Pedido com id: %s não encontrado",id)));;
+    public ResponsePedidoDTO editarPedido(Long id, CreatePedidoDTO creteDto) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(String.format("Pedido com id: %s não encontrado", id)));
+
         pedido.setCodigoPedido(creteDto.getCodigoPedido());
         pedido.setProduto(creteDto.getProduto());
         pedido.setQuantidade(creteDto.getQuantidade());
         pedido.setValorTotal(creteDto.getValorTotal());
         pedido.setStatus(creteDto.getStatus());
         pedido.setDataAtualizacao(LocalDateTime.now());
-        Pedido Atualizado=pedidoRepository.save(pedido);
-        return PedidoMapper.toDto(Atualizado);
 
+        Pedido atualizado = pedidoRepository.save(pedido);
+
+        // 🔥 disparar evento Kafka
+        PedidoAtualizadoEvent evento = new PedidoAtualizadoEvent(
+                pedido.getCodigoPedido(), pedido.getStatus(), pedido.getDataAtualizacao());
+        pedidoProducer.enviarPedidoAtualizado(evento);
+
+        return PedidoMapper.toDto(atualizado);
     }
 
 }
