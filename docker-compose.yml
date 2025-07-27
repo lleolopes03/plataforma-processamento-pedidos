@@ -1,0 +1,76 @@
+
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    ports:
+      - "2181:2181"
+    networks:
+      - observabilidade
+
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    environment:
+
+        KAFKA_CFG_BROKER_ID: 1
+        KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+        KAFKA_CFG_LISTENERS: PLAINTEXT://:9092
+        KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+        ALLOW_PLAINTEXT_LISTENER: yes
+    ports:
+      - "9092:9092"
+    networks:
+      - observabilidade
+  db:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_DB: processamento_pedidos
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./dados_postgres:/var/lib/postgresql/data
+    networks:
+      - observabilidade
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - observabilidade
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - observabilidade
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: plataforma-processamento-pedidos
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - observabilidade
+
+networks:
+  observabilidade:

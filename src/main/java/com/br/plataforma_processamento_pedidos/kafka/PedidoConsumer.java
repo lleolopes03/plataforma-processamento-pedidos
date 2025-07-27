@@ -1,4 +1,4 @@
-package com.br.plataforma_processamento_pedidos.service;
+package com.br.plataforma_processamento_pedidos.kafka;
 
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;

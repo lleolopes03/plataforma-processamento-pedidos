@@ -7,20 +7,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PedidoProducer {
-    @Autowired
+
     private ObjectMapper objectMapper;
     private static final Logger log = LoggerFactory.getLogger(PedidoProducer.class);
-
     private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public PedidoProducer(KafkaTemplate<String, String> kafkaTemplate) {
+    public PedidoProducer(KafkaTemplate<String, String> kafkaTemplate, ObjectMapper objectMapper) {
         this.kafkaTemplate = kafkaTemplate;
+        this.objectMapper = objectMapper;
     }
 
     public void enviarPedidoCriado(String mensagem) {

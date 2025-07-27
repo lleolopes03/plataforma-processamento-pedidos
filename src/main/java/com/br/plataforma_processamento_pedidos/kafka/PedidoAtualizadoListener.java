@@ -1,6 +1,7 @@
-package com.br.plataforma_processamento_pedidos.service;
+package com.br.plataforma_processamento_pedidos.kafka;
 
 import com.br.plataforma_processamento_pedidos.dtos.PedidoAtualizadoEvent;
+import com.br.plataforma_processamento_pedidos.service.HistoricoEventoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

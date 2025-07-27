@@ -1,4 +1,4 @@
-package com.br.plataforma_processamento_pedidos.service;
+package com.br.plataforma_processamento_pedidos.kafka;
 
 import com.br.plataforma_processamento_pedidos.dtos.PedidoDeletadoEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
