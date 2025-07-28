@@ -33,9 +33,4 @@ http://localhost:3000 (admin/admin)
 # Acessar Prometheus
 http://localhost:9090
 
-📈 Futuras melhorias
-- Integração com Apache Kafka para processamento assíncrono
-- Criação dos controllers REST
-- Documentação com Swagger
-- Validações com Bean Validation
-- Autenticação e autorização com Spring Security
+
